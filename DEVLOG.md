@@ -43,6 +43,40 @@
 
 ---
 
+## 2026-05-21 — Capacitor 安卓版改造
+
+### 去后端 + 本地存储化
+
+- **数据层切换**：`app.js` import 从 `api.js`（HTTP/REST）切到 `data.js`（IndexedDB），函数签名全兼容
+- **认证体系删除**：去掉了 auth-modal、6 个 auth 函数（`showAuthModal`/`hideAuthModal`/`handleAuthSwitch`/`handleAuthSubmit`/`bindAuthEvents`）、`_authMode` 变量、退出登录按钮
+- **账号按钮隐藏**：本地版单用户，无需登录/登出
+- **登录拦截取消**：`init()` 中 `if (!isLoggedIn())` 检查移除，直接进地球
+- **照片 base64 本地化**：`data.js` 新增 `uploadPhoto`（FileReader → base64 dataUrl）、`login`/`register`/`logout`/`isLoggedIn`/`deletePhoto` 6 个兼容函数
+- **照片持久化修复**：编辑模式、新建模式、详情页 3 处 `uploadPhoto` 后补 `savePlace`（原版靠服务端 `getAllPlaces` 重载，本地版不回存会丢照片）
+- **CSP 精简**：去掉 `http://localhost:8000` 引用，`img-src` 和 `connect-src` 精简为本地 + CDN
+
+### Capacitor 集成
+
+- `package.json` 添加 `@capacitor/core`、`@capacitor/cli`、`@capacitor/android`
+- `capacitor.config.json` 配置：`appId: com.colorfulmeridian.app`，`webDir: www`
+- Android 平台已添加：`npx cap add android`
+- `www/` 和 `android/` 目录加入 `.gitignore`
+
+### Android Studio 环境
+
+- **安装**：winget → C 盘，后卸载重装到 `D:\tool\android studio`
+- **SDK**：首次安装 1.5GB 在 C 盘，手动搬至 `D:\Android\Sdk`，同步更新配置文件和环境变量 `ANDROID_HOME`
+- **汉化**：官方语言包仅支持到 2024.2，AS 2025.3.4 需用社区修复版 `zh-261.22158.277.jar`（sollyu/AndroidStudioChineseLanguagePack）
+- **DeepSeek 接入**：AS 原生 Remote Provider 配 DeepSeek V4 Pro（`deepseek-v4-pro`，1M 上下文，OpenAI 兼容端点）
+- **Agent Mode**：开启 Context Sharing
+
+### GitHub
+
+- 独立仓库：`https://github.com/jjrick62/colorful-meridian-android`
+- 初始提交 29 文件，含完整 Capacitor 工程结构
+
+---
+
 ## 2026-05-01 — 全面重构日
 
 ### 响应式 & 触摸适配
