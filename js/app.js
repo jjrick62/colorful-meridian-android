@@ -123,6 +123,16 @@ async function doInit() {
   // 悬浮卡片：先同步，再注册每帧更新
   syncPlaceCards();
   earth.onFrame(() => updatePlaceCards());
+
+  // 隐藏启动闪屏
+  const loader = document.getElementById('splash-loader');
+  if (loader) {
+    loader.classList.add('ready');
+    loader.addEventListener('click', () => {
+      loader.addEventListener('transitionend', () => loader.remove());
+      loader.classList.add('fade-out');
+    }, { once: true });
+  }
 }
 
 // ===== 应用数据到地球 =====
